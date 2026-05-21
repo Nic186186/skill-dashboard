@@ -1,29 +1,34 @@
 # Skill Dashboard
 
-一个本地优先的 Agent Skill 看板：扫描你电脑里的 `SKILL.md`，把散落在 Claude Code、Codex、插件缓存和项目目录里的 skills 统一变成一个可搜索、可筛选、可复制调用语句的网页面板。
+一个用 Claude Code 半天做出来的本地 Skill 看板：把 `~/.claude/skills` 里的 `SKILL.md` 扫描出来，整理成可搜索、可筛选、可复制调用语句的网页控制台。
 
-![Skill Dashboard hero](docs/images/hero.png)
+> 核心目标不是“再做一个管理系统”，而是让 Claude Code 里的 skills 从一堆文件，变成真正看得见、找得到、用得起来的能力资产。
+
+![Skill Dashboard overview](docs/images/01-overview.png)
 
 ## 为什么做这个
 
-我在同时使用 Claude Code、Codex、OpenClaw、Obsidian 里的 Agent 插件，也在不断安装和改造各种 skills。问题很快就出现了：
+我一直在用 Claude Code 做产品开发和知识管理，也在不断安装、创建、改造各种 skills。skills 多起来以后，问题非常现实：
 
-- skill 装得越多，越记不住“到底有什么能力”。
-- 同一个 skill 可能在 Claude、Codex、插件缓存里有多个副本。
-- 真到要用的时候，经常不是不会做，而是不知道该调用哪个 skill。
-- skills 本来是为了降低重复劳动，但如果入口不可见，它们自己也会变成一堆新的信息债。
+- 装了很多 skill，但用的时候想不起来。
+- 知道有这个能力，却忘了准确名字和调用方式。
+- `SKILL.md` 都在目录里躺着，但没有一个面板告诉我“我到底有什么武器”。
+- skills 本来是为了减少重复劳动，可入口不可见时，它们自己也会变成新的信息债。
 
-所以我花了大概半天时间做了这个小看板。
+所以我花了大概半天时间，用 Claude Code 做了这个 Skill Dashboard。
 
-它不是一个宏大的平台，也不是又一个复杂的 Agent 框架。它只解决一个很朴素的问题：
+它先服务我自己的 Claude Code 工作流：
 
-> 我现在到底装了哪些 skills？它们什么时候该用？我能不能一键复制调用语句？
+> 我现在到底装了哪些 skills？它们什么时候该用？哪个最近用过？能不能一键复制调用语句？
+
+后面才顺手兼容 Codex、插件缓存、项目目录等其他 skill 来源。换句话说：这是一个从 Claude Code 使用场景长出来的小工具，不是为了 Codex 做的。
 
 ## 功能
 
-- 自动扫描本机多个 skill 目录
+- 默认扫描 Claude Code skills：`~/.claude/skills`
+- 可选扫描 Codex / 插件缓存 / 项目目录等其他 skill 来源
 - 解析 `SKILL.md` frontmatter 和正文描述
-- 按 skill 名称去重，合并多处安装副本
+- 按 skill 名称和描述去重，合并多处安装副本
 - 统计来源：Claude、Codex、Plugin、Project
 - 从本地 Chronicle / Claude memory 数据库里估算使用次数
 - 显示最近出现时间、版本、副本数量
@@ -33,14 +38,21 @@
 - 一键复制调用语句：`使用 $skill-name 帮我处理：`
 - 一键复制 skill 目录
 
-![Search and filter](docs/images/search.png)
+![Search and filtering](docs/images/02-search.png)
+
+## 页面细节
+
+每个 skill 会被整理成一张卡片：用途、人话版触发场景、版本、副本数量、最近出现时间、来源路径和复制按钮都放在一起。重点是降低从“看到 skill”到“真正调用 skill”的摩擦。
+
+![Skill cards](docs/images/03-cards.png)
 
 ## 适合谁
 
-- 同时使用 Claude Code / Codex / OpenClaw / Obsidian Agent 的人
-- 经常安装、迁移、修改 skills 的人
-- 想把自己的 Agent 能力资产可视化的人
+- 主要使用 Claude Code，并且安装了很多 skills 的人
+- 经常自己写 `SKILL.md`、改 skill、迁移 skill 的人
+- 想把 Agent 能力资产可视化的人
 - 想知道哪些 skill 真的被用过，哪些只是躺在硬盘里吃灰的人
+- 同时使用 Claude Code / Codex / OpenClaw / Obsidian Agent，但希望有一个统一入口的人
 
 ## 技术栈
 
@@ -77,10 +89,15 @@ pnpm lint
 
 ## 默认扫描目录
 
-当前会扫描这些位置：
+Claude Code 是第一优先级：
 
 ```text
 ~/.claude/skills
+```
+
+同时也会尝试扫描这些可选位置，目录不存在会自动跳过：
+
+```text
 ~/.codex/skills
 ~/.codex/plugins/cache/openai-bundled
 ~/.codex/plugins/cache/openai-curated
@@ -89,8 +106,6 @@ pnpm lint
 ~/.openclaw/workspace/skills
 ~/.agents/skills
 ```
-
-如果目录不存在，会自动跳过。
 
 使用记录会尝试读取：
 
@@ -109,11 +124,9 @@ pnpm lint
 - 三列卡片，优先让你扫全局，而不是逐个点开
 - 复制按钮放在每张卡片底部，减少从“看到 skill”到“调用 skill”的摩擦
 
-![Skill cards](docs/images/cards.png)
-
 ## 一句话介绍
 
-Skill Dashboard 是一个给 Agent power user 用的本地 skill 资产面板：把散落的 `SKILL.md` 变成可搜索、可筛选、可复制调用的操作台。
+Skill Dashboard 是一个给 Claude Code power user 用的本地 skill 资产面板：把散落的 `SKILL.md` 变成可搜索、可筛选、可复制调用的操作台。
 
 ## License
 
