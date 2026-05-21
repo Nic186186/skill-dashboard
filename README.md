@@ -44,7 +44,9 @@
 
 每个 skill 会被整理成一张卡片：用途、人话版触发场景、版本、副本数量、最近出现时间、来源路径和复制按钮都放在一起。重点是降低从“看到 skill”到“真正调用 skill”的摩擦。
 
-![Skill cards](docs/images/03-cards.png)
+![Skill cards](docs/images/03-skill-cards.png)
+
+![Skill detail](docs/images/04-detail.png)
 
 ## 适合谁
 
